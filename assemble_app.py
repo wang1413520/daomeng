@@ -43,7 +43,7 @@ appdir = os.path.join(OUT, "resources", "app")
 shutil.copytree(PYI_DIST, os.path.join(appdir, "backend"))
 
 print("[3/3] 写入外壳 resources/app …")
-for f in ("package.json", "main.js"):
+for f in ("package.json", "main.js", "updater.js", "updater_apply.ps1"):
     shutil.copy2(os.path.join(APP_SRC, f), os.path.join(appdir, f))
 shutil.copy2(ICO, os.path.join(appdir, "icon.ico"))
 

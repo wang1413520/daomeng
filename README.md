@@ -48,6 +48,12 @@ venv\Scripts\python build_exe.py
 产出 `dist\DreamDMK\DreamDMK.exe`（含 web 前端资源；config.yaml/token.json 自动复制到同目录）。
 整个 `dist\DreamDMK` 文件夹可拷到任意位置使用。注意：exe 可能被杀毒软件误报（自动操作类程序通病），需加白名单。
 
+## 发布与自动更新（桌面应用）
+
+- 桌面应用内置更新检查：启动后静默请求 `github.com/…/releases/latest`，发现更高版本时弹窗提供「下载并更新」→ 下载解压 → 重启应用由 `updater_apply.ps1` 完成替换（保留 config/token/记录）。
+- 发布约定：新建 Release，tag 用 `v主.次.修`，**资产名必须以 `dreamdmk-desktop` 开头且为 .zip**（如 `dreamdmk-desktop-win-x64.zip`）；发布包内容应经过净身（config.yaml 换模板、剔除 token.json/state.sqlite/logs）。
+- 无 Release / 同版本 / 网络失败时更新检查静默跳过。
+
 ## 工程结构
 
 ```
