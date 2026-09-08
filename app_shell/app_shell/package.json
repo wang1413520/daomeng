@@ -1,8 +1,9 @@
-{
+﻿{
   "name": "dreamdmk-workbench",
-  "productName": "到梦空间 · 自动报名工作台",
-  "version": "1.4.2",
-  "description": "到梦空间自动报名桌面客户端",
+  "productName": "鍒版ⅵ绌洪棿 路 鑷姩鎶ュ悕宸ヤ綔鍙?,
+  "version": "1.4.3",
+  "description": "鍒版ⅵ绌洪棿鑷姩鎶ュ悕妗岄潰瀹㈡埛绔?,
   "main": "main.js",
   "private": true
 }
+

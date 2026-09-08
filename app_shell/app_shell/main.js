@@ -148,11 +148,14 @@ async function doUpdateCheck(manual) {
 }
 
 function ensureShortcut() {
-  // 首次启动询问是否创建桌面快捷方式（便携应用默认不创建）
+  // 按"存在性"询问：桌面已有本应用快捷方式就静默跳过，没有才询问
   try {
-    const marker = path.join(app.getPath('userData'), 'firstrun.flag');
-    if (fs.existsSync(marker)) return;
-    fs.writeFileSync(marker, '1');
+    const desk = app.getPath('desktop');
+    const lnkPath = path.join(desk, '到梦空间工作台.lnk');
+    if (fs.existsSync(lnkPath)) {
+      lg('shortcut 已存在，跳过询问');
+      return;
+    }
     const ico = path.join(APP_DIR, 'icon.ico');
     const ps = '$ws = New-Object -ComObject WScript.Shell; ' +
       '$lnk = Join-Path ([Environment]::GetFolderPath("Desktop")) "到梦空间工作台.lnk"; ' +
