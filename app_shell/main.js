@@ -6,6 +6,13 @@ const http = require('http');
 const path = require('path');
 const fs = require('fs');
 
+const updater = require('./updater.js');
+
+const REPO = 'wang1413520/daomeng';
+const ASSET_PREFIX = 'dreamdmk-desktop';
+let localVersion = '0.0.0';
+try { localVersion = require('./package.json').version || '0.0.0'; } catch (e) { /* ignore */ }
+
 const PORT = parseInt(process.env.DMK_PORT || '8921', 10);
 const URL = 'http://127.0.0.1:' + PORT;
 const APP_DIR = __dirname;
@@ -89,6 +96,57 @@ function createWindow() {
   win.on('closed', () => { lg('window closed'); win = null; });
 }
 
+// ---------- 更新检查（打包版生效；Release 资产名须为 dreamdmk-desktop*.zip） ----------
+async function doUpdateCheck(manual) {
+  try {
+    const rel = await updater.latestRelease(REPO);
+    if (!rel || !rel.tag_name) { if (manual) dialog.showMessageBox(win, { message: '当前已是最新版本 v' + localVersion, type: 'info' }); return; }
+    if (!updater.isNewer(localVersion, rel.tag_name)) { if (manual) dialog.showMessageBox(win, { message: '当前已是最新版本 v' + localVersion, type: 'info' }); return; }
+    const asset = updater.findAsset(rel, ASSET_PREFIX);
+    if (!asset) { if (manual) dialog.showMessageBox(win, { message: '发现新版 ' + rel.tag_name + '，但未找到配套安装包资产。', type: 'warning' }); return; }
+    const opt = await dialog.showMessageBox(win, {
+      type: 'info',
+      message: '发现新版本 ' + rel.tag_name,
+      detail: '当前 v' + localVersion + ' → ' + rel.tag_name +
+        '\n更新包：' + asset.name + '（' + Math.round(asset.size / 1048576) + ' MB）\n下载后需重启应用完成替换。',
+      buttons: ['下载并更新', '暂不'],
+      defaultId: 0, cancelId: 1,
+    });
+    if (opt.response !== 0) return;
+    const exeDir = path.dirname(process.execPath);
+    const upDir = path.join(exeDir, '.update');
+    fs.mkdirSync(upDir, { recursive: true });
+    const zipPath = path.join(upDir, 'new.zip');
+    const newDir = path.join(upDir, 'new');
+    await updater.downloadFile(asset.browser_download_url, zipPath);
+    await new Promise((resolve, reject) => {
+      const ps = spawn('powershell', ['-NoProfile', '-Command',
+        'Expand-Archive -LiteralPath "' + zipPath + '" -DestinationPath "' + newDir + '" -Force']);
+      ps.on('close', (c) => (c === 0 ? resolve() : reject(new Error('解压失败 code ' + c))));
+      ps.on('error', reject);
+    });
+    fs.writeFileSync(path.join(upDir, 'pending.json'),
+      JSON.stringify({ tag: rel.tag_name, zip: zipPath, newDir: newDir }), 'utf8');
+    const go = await dialog.showMessageBox(win, {
+      type: 'question',
+      message: '更新包已就绪（' + rel.tag_name + '）',
+      detail: '应用将退出并在数秒后自动完成替换并重新打开。请稍候，期间不要手动启动。',
+      buttons: ['立即重启更新', '稍后再说'],
+      defaultId: 0, cancelId: 1,
+    });
+    if (go.response !== 0) return;
+    spawn('powershell', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', updaterPs(),
+      '-AppDir', '"' + exeDir + '"', '-NewDir', '"' + newDir + '"', '-ZipPath', '"' + zipPath + '"',
+      '-ExePath', '"' + process.execPath + '"', '-Pid', String(process.pid)], {
+      detached: true, stdio: 'ignore', windowsHide: true,
+    }).unref();
+    app.quit();
+  } catch (e) {
+    if (manual) dialog.showMessageBox(win, { message: '检查更新失败：' + e.message, type: 'error' });
+    lg('update check failed: ' + e.message);
+  }
+}
+
 lg('=== boot ===');
 try {
   // 用户数据目录放在应用旁（避免 %APPDATA% 权限问题/沙箱拒绝）
@@ -117,6 +175,10 @@ if (!app.requestSingleInstanceLock()) {
     }
     createWindow();
     app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
+    if (app.isPackaged) {
+      setTimeout(() => doUpdateCheck(false), 8000);   // 启动 8 秒后静默检查更新
+      lg('auto update check armed (v' + localVersion + ')');
+    }
   });
   app.on('window-all-closed', () => { lg('all closed -> quit'); app.quit(); });
   app.on('before-quit', () => {
