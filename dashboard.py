@@ -327,11 +327,17 @@ RUN_NAME = "DreamDMKWorkbench"
 
 def _autostart_cmd():
     if getattr(sys, "frozen", False):
-        return '"%s" --no-open' % sys.executable
+        exe = sys.executable
+        # 打包后的桌面应用结构：resources/app/backend/DreamDMK.exe -> 应用本体在其上两级
+        if os.path.basename(os.path.dirname(exe)).lower() == "backend":
+            cand = os.path.normpath(os.path.join(os.path.dirname(exe), "..", "..", "DreamDMK.exe"))
+            if os.path.isfile(cand):
+                exe = cand
+        return '"%s"' % exe
     py = os.path.join(os.path.dirname(sys.executable), "pythonw.exe")
     if not os.path.isfile(py):
         py = sys.executable
-    return '"%s" "%s" --no-open' % (py, os.path.abspath(__file__))
+    return '"%s" "%s" --app' % (py, os.path.abspath(__file__))
 
 
 def autostart_get():
