@@ -42,6 +42,43 @@ def now_str():
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
+def _fmt_range(s):
+    """'2026.09.08 12:10-2026.09.09 13:00' -> '09-08 12:10 ~ 09-09 13:00'"""
+    try:
+        parts = [x.strip() for x in str(s).split("-")]
+        if len(parts) == 2:
+            out = []
+            for p in parts:
+                seg = p.split()
+                if len(seg) == 2:
+                    d = seg[0].split(".")[-2:]
+                    out.append("%s-%s %s" % (d[0], d[1], seg[1][:5]))
+            if len(out) == 2:
+                return " ~ ".join(out)
+    except Exception:
+        pass
+    return str(s or "—")
+
+
+def format_signup_mail(kind, name, aid, p, msg=""):
+    """结果邮件：带活动画像。kind: success / terminal / retry
+    p: {joindate,startdate,org,quota,category,online}"""
+    status = {"success": "✅ 已报名成功",
+              "terminal": "❌ 不可报名",
+              "retry": "❌ 报名失败（将按上限自动重试）"}.get(kind, "—")
+    subj = {"success": "【到梦空间】报名成功",
+            "terminal": "【到梦空间】报名不可行",
+            "retry": "【到梦空间】报名失败"}[kind]
+    act_time = "%s%s" % (p.get("startdate", "—"),
+                         "（线上）" if p.get("online") else "")
+    body = "时间：%s\n活动ID：%s\n报名时间：%s\n活动时间：%s\n组织方：%s\n名额：%s\n分类：%s\n状态：%s" % (
+        now_str()[:16], aid, p.get("joindate", "—"), act_time,
+        p.get("org", "—"), p.get("quota", "—"), p.get("category", "—"), status)
+    if msg:
+        body += "\n服务器消息：%s" % str(msg)[:200]
+    return ("%s - \"%s\"" % (subj, name), body)
+
+
 def iso_now():
     return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
@@ -232,6 +269,7 @@ class Engine:
         self.session = None
         self.consec_fail = 0
         self.detail_cache = {}
+        self._profile_cache = {}
         self.listeners = []          # callable(event dict) 事件订阅（Web 推送）
         self._stop_evt = threading.Event()
         self._wake_evt = threading.Event()
@@ -432,6 +470,31 @@ class Engine:
         return False
 
     # ---------------- 报名 ----------------
+    def _fetch_profile(self, aid):
+        """取活动画像（详情接口）；失败返回空 dict，不阻断主流程"""
+        try:
+            if aid in self._profile_cache:
+                return self._profile_cache[aid]
+            res = self._call("activity_detail", aid)
+            dd = (res.get("data") or {}) if str(res.get("code", "")) == "100" else {}
+            text = " ".join(str(x) for x in (dd.get("address"), dd.get("activityName"),
+                                             dd.get("joinWayDesc")) if isinstance(x, str))
+            jm = int(dd.get("joinmaxnum") or dd.get("applyJoinMaxNum") or 0)
+            jn = int(dd.get("joinNum") or 0)
+            p = {
+                "joindate": _fmt_range(dd.get("joindate")),
+                "startdate": _fmt_range(dd.get("startdate")),
+                "org": dd.get("outname") or dd.get("collegename") or dd.get("schoolname") or "—",
+                "quota": ("%s/%s" % (jn, jm)) if jm > 0 else ("不限" if jn else "—"),
+                "category": dd.get("catalog2name") or dd.get("catalog1name") or "—",
+                "online": "线上" in text,
+            }
+            self._profile_cache[aid] = p
+            return p
+        except Exception as e:
+            log.warning("画像获取失败 %s: %s", aid, e)
+            return {}
+
     def _signup(self, item):
         aid = str(item["aid"])
         name = str(item.get("name", aid))
@@ -470,10 +533,8 @@ class Engine:
             log.info("★★ 报名成功：%s [%s]", name, aid)
             self.emit("signup", "success", "报名成功：%s" % name, aid,
                       {"ok": True, "code": code, "msg": msg_s, "attempts": attempts})
-            self.mail.send(
-                "【到梦空间】报名成功 - %s" % name,
-                "时间：%s\n活动：%s\n活动ID：%s\n状态：报名成功（如活动含报名表单或名额限制以平台为准）"
-                % (now_str(), name, aid))
+            self.mail.send(*format_signup_mail("success", name, aid,
+                                               self._fetch_profile(aid), msg_s))
         elif code == "2000011" or "已报" in msg_s or "重复报名" in msg_s:
             self.store.record(aid, name, True, code, "已报名过")
             log.info("此前已报名过：%s [%s]（记入成功，不再重复）", name, aid)
@@ -486,10 +547,8 @@ class Engine:
                       {"ok": False, "terminal": True, "code": code, "msg": msg_s,
                        "attempts": attempts})
             if attempts == 1:
-                self.mail.send(
-                    "【到梦空间】报名不可行 - %s" % name,
-                    "时间：%s\n活动：%s\n活动ID：%s\n服务器消息：%s"
-                    % (now_str(), name, aid, msg_s))
+                self.mail.send(*format_signup_mail("terminal", name, aid,
+                                                   self._fetch_profile(aid), msg_s))
         else:
             attempts = self.store.record(aid, name, False, code, msg_s)
             log.info("报名失败（将按上限重试）：%s [%s] code=%s msg=%s", name, aid, code, msg_s)
@@ -497,10 +556,8 @@ class Engine:
                       {"ok": False, "terminal": False, "code": code, "msg": msg_s,
                        "attempts": attempts})
             if attempts == 1:
-                self.mail.send(
-                    "【到梦空间】报名失败 - %s" % name,
-                    "时间：%s\n活动：%s\n活动ID：%s\n服务器消息：%s\n\n按重试上限自动重试中。"
-                    % (now_str(), name, aid, msg_s))
+                self.mail.send(*format_signup_mail("retry", name, aid,
+                                                   self._fetch_profile(aid), msg_s))
 
     # ---------------- 轮次 ----------------
     def cycle(self):
@@ -509,6 +566,7 @@ class Engine:
         self.ensure_session()
         items = self.discover()
         self.detail_cache = {}
+        self._profile_cache = {}
         hits = []
         for it in items:
             try:
