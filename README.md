@@ -3,14 +3,15 @@
 本地"客户端式"工作台：低频轮询 → 挑选「线上」报名中活动 → 自动报名 → QQ 邮箱 + Windows 气泡通知。
 基于到梦空间 APP v4.9.5 官方接口协议实现，**已用真实账号在真实服务器全链路验证**。
 
-## ⬇️ 最新版下载（点击即下）
+## ⬇️ 最新版下载（点击即下 · v1.4.1）
 
-[![Download 桌面版](https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-%E6%A1%8C%E9%9D%A2%E7%89%88%20Desktop%20v1.3.0-1f6feb?style=for-the-badge&logo=github&logoColor=white)](https://github.com/wang1413520/daomeng/releases/download/v1.3.0/dreamdmk-desktop-win-x64.zip)
-[![Download 绿色版](https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-%E7%BB%BF%E8%89%B2%E7%89%88%20EXE%20v1.3.0-1f6feb?style=for-the-badge&logo=github&logoColor=white)](https://github.com/wang1413520/daomeng/releases/download/v1.3.0/dreamdmk-backend-exe.zip)
+[![Download 桌面版](https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-%E6%A1%8C%E9%9D%A2%E7%89%88%20Desktop%20v1.4.1-1f6feb?style=for-the-badge&logo=github&logoColor=white)](https://github.com/wang1413520/daomeng/releases/download/v1.4.1/dreamdmk-desktop-win-x64.zip)
+[![Download 绿色版](https://img.shields.io/badge/%E4%B8%8B%E8%BD%BD-%E7%BB%BF%E8%89%B2%E7%89%88%20EXE%20v1.4.1-1f6feb?style=for-the-badge&logo=github&logoColor=white)](https://github.com/wang1413520/daomeng/releases/download/v1.4.1/dreamdmk-backend-exe.zip)
 [![Downloads](https://img.shields.io/github/downloads/wang1413520/daomeng/total?style=for-the-badge&label=%E7%B4%AF%E8%AE%A1%E4%B8%8B%E8%BD%BD&color=1f6feb)](https://github.com/wang1413520/daomeng/releases)
 
-> 桌面版 = 完整应用（自带引擎与界面，推荐）；绿色版 = 轻量后端 exe。解压后按说明填写 `config.yaml` 即可使用。
-> ⚠️ 若提示 404：说明 Release `v1.3.0` 尚未发布，请到 [Releases 页面](https://github.com/wang1413520/daomeng/releases) 查看最新版本。
+> 桌面版 = 完整应用（自带引擎与界面，推荐）；绿色版 = 轻量后端 exe。两者同源同版本。
+> 所有历史版本见 [Releases 页面](https://github.com/wang1413520/daomeng/releases)；已安装的桌面版会自动检测并提示更新，无需手动重下。
+
 
 ```
 运行形态        入口                                           说明
