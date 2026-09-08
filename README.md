@@ -48,11 +48,25 @@ venv\Scripts\python build_exe.py
 产出 `dist\DreamDMK\DreamDMK.exe`（含 web 前端资源；config.yaml/token.json 自动复制到同目录）。
 整个 `dist\DreamDMK` 文件夹可拷到任意位置使用。注意：exe 可能被杀毒软件误报（自动操作类程序通病），需加白名单。
 
-## 发布与自动更新（桌面应用）
+## Release：下载与发布
 
-- 桌面应用内置更新检查：启动后静默请求 `github.com/…/releases/latest`，发现更高版本时弹窗提供「下载并更新」→ 下载解压 → 重启应用由 `updater_apply.ps1` 完成替换（保留 config/token/记录）。
-- 发布约定：新建 Release，tag 用 `v主.次.修`，**资产名必须以 `dreamdmk-desktop` 开头且为 .zip**（如 `dreamdmk-desktop-win-x64.zip`）；发布包内容应经过净身（config.yaml 换模板、剔除 token.json/state.sqlite/logs）。
-- 无 Release / 同版本 / 网络失败时更新检查静默跳过。
+**给使用者（怎么拿到成品）：**
+- 到 GitHub Releases 页面下载 `dreamdmk-desktop-win-x64.zip`（桌面应用，推荐）或 `dreamdmk-backend-exe.zip`（轻量绿色版）
+- 解压后双击 `DreamDMK.exe`（桌面版）或 `dist 内 DreamDMK.exe`（绿色版）即可运行
+- 首次使用：按同目录/解压根部的说明填写 `config.yaml`（到梦账号 + QQ 邮箱 SMTP 授权码），填完重启应用生效
+- 更新：桌面应用启动后自动检查最新 Release，发现新版可一键「下载并更新」，重启即完成替换（**config/token/报名记录全部保留**）
+
+**给维护者（怎么发布新版本）：**
+1. 修改 `app_shell/package.json` 的 `version`（如 `1.3.1`）
+2. `venv\Scripts\python build_exe.py` 重建后端
+3. `venv\Scripts\python assemble_app.py` 重组桌面应用
+4. `venv\Scripts\python make_release.py` 自动产出**净身发布包**（剔除真实凭据/登录态/记录，config.yaml 换占位模板）到 `dist\release\`
+5. 在 GitHub Releases 新建 Release：tag 用 `v1.3.1`，上传 `dist\release\` 下的 zip
+
+**约定与提醒：**
+- **资产命名**：桌面版必须为 `dreamdmk-desktop` 开头的 `.zip`（应用内更新器按名字识别，勿改名）
+- tag 与本地 `package.json` 版本一致时更新检查静默跳过；更高版本才会提示
+- 发布包已自动净身；本地使用的 `config.yaml`（含真实密码/授权码）永远不要上传到仓库或压缩包
 
 ## 工程结构
 
@@ -65,6 +79,8 @@ venv\Scripts\python build_exe.py
 ├── notify.py     Windows 托盘气泡（ctypes 零依赖）
 ├── main.py       无头 CLI（引擎同源）
 ├── build_exe.py  PyInstaller 打包脚本
+├── assemble_app.py  Electron 桌面应用组装
+├── make_release.py  净身发布包生成（自动化）
 ├── web/          工作台前端（深色主题，无构建依赖）
 ├── config.yaml   全部配置（含明文密码，勿外传）
 ├── logs/         运行日志 dashboard.log / bot.log
