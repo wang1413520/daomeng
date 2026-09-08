@@ -220,7 +220,7 @@ class Dash:
             ok = m.send("【到梦空间】控制台测试通知",
                         "时间：%s\n内容：QQ 邮箱通知链路正常。" %
                         time.strftime("%Y-%m-%d %H:%M:%S"))
-            self.send_json(h, {"ok": ok})
+            self.send_json(h, {"ok": ok, "msg": None if ok else (m.last_error or "发送失败")})
 
         elif path == "/api/account/apply" and method == "POST":
             body = self.read_json(h)

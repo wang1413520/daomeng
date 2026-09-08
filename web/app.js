@@ -412,12 +412,28 @@ async function saveSettings() {
 $("btnSaveCfg").onclick = saveSettings;
 $("btnMailTest").onclick = async function () {
   this.disabled = true;
-  $("mailTestRes").textContent = "发送中…";
+  $("mailTestRes").textContent = "正在保存并发送…";
   try {
+    // 先保存表单里的邮箱三件套（授权码留空=保持原值），再拿刚保存的值测试
+    const cfg = {
+      mail: {
+        from_addr: String($("fMailFrom").value || "").trim(),
+        auth_code: String($("fMailCode").value || "").trim(),
+        to_addr: String($("fMailTo").value || "").trim(),
+      },
+    };
+    await post("/api/config", { cfg });
     const r = await post("/api/mailtest");
-    $("mailTestRes").textContent = r.ok ? "已发送，请查收邮箱" : "发送失败";
-    toast(r.ok ? "测试邮件已发送" : "测试邮件发送失败", r.ok ? "ok" : "err");
-  } catch (e) { $("mailTestRes").textContent = "发送失败"; }
+    if (r.ok) {
+      $("mailTestRes").textContent = "✔ 已发送，请查收邮箱";
+      toast("测试邮件已发送", "ok");
+    } else {
+      $("mailTestRes").textContent = "✘ " + (r.msg || "发送失败");
+      toast("测试邮件失败：" + (r.msg || ""), "err");
+    }
+  } catch (e) {
+    $("mailTestRes").textContent = "保存或发送失败：" + e.message;
+  }
   this.disabled = false;
 };
 $("fAutoStart").onchange = async function () {
