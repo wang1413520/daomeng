@@ -1,0 +1,44 @@
+# ============ 到梦空间自动报名机器人 · 配置模板 ============
+# 复制本文件为 config.yaml 后填写（本模板可安全公开，无任何真实凭据）
+
+account:
+  phone: "你的到梦APP手机号"      # 例 13800138000
+  password: "你的到梦密码"
+
+# 爬取频率：默认 15 分钟一轮 ±5 分钟抖动
+poll:
+  interval_sec: 900
+  jitter_sec: 300
+  max_pages: 2
+  page_size: 10
+  timeout_sec: 20
+  max_retries: 3
+  retry_backoff_base: 30
+
+rules:
+  name_include: ["线上"]        # 标题关键词（每行一个，留空=全部）
+  name_exclude: []
+  detail_check: true            # 标题不含时再查活动详情
+  detail_kw: ["线上", "online"]
+  signup_wait_sec: [2, 6]
+
+signup:
+  auto: true                    # false=只发现不报名
+  remark: ""
+  max_fail_retries: 3
+state_db: "state.sqlite"
+
+# QQ 邮箱通知：mail.qq.com -> 设置->账号->开启 POP3/SMTP 生成授权码
+mail:
+  enabled: true
+  host: "smtp.qq.com"
+  port: 465
+  from_addr: "你的QQ号@qq.com"
+  auth_code: "16位SMTP授权码"      # 不是QQ密码！
+  to_addr: "你的QQ号@qq.com"
+
+dashboard:
+  port: 8921
+
+dry_run: false
+log_level: "INFO"

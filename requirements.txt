@@ -1,0 +1,4 @@
+# 纯标准库 HTTP + 三个加密/解析依赖（pyDes 纯 Python，pycryptodome 提供 AES）
+pycryptodome
+pyDes
+PyYAML

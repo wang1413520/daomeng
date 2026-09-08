@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>到梦空间 · 自动报名工作台</title>
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAH7UlEQVR42s2Xa2xb5RnHS0ObLk2ai+PL8S2OHd8vx8fXJL7FSZxL09ybhC6jaVpK6WgJgWkbK6JQ2nVI7EM1hCKEWAtiYxKoC11YUTW2pahsg01aQrdJ09ZBO+0ChTDGJvbB/z3v8XFybKdo6qdZ+sdRYr+//3N5n/c9Gzb8n75uIW0k3UraRNp8k9okrbFRWvN/At9aVVXd29hom3e7A+95veGs2x2EyxWA0ynA4xbg9wkI8Ex+CD4ePrcXTrsLZpMdOl0TOM4MjaYRanVDtr5e/151tXJ+8+bP9UpmbmjkFnpVGo2WMz5fJEtgrIH9cLv8CPoDCAsBeiewn4ef94H3eciAGx6HE267AzaLDVquEUqlkWSQZIRK1ZAlI88Sp/JGJsoJ/hzBkYeziB0Ovxh1WAgiJAgIhgQI4QD8QQF8QIBXoP/7vXD53HC6HHBYrbCZLWTCKIdTNkxiVmpqVM8xVjGcpX2QRe7xhArgLoqeRR0iYCASJHgIQojMREIIR0MIhYPwB+hzXg8clAmbyw6b1SKa4DSmAjgTlSdbXl4xIJVj9VVhMlkXGDxfawa323mx1izqQISBQ4hEI0gnYsikE+gidaZiSLVG0ULmPD4vGXDC7nbS962wmq0ELYBDqzVDodAsMGYezjq0lup8PV9vh4OHzeaD28kjSNGJkRM8kUigN5NGT6YNne0JpNvipBg60nF0tDEjEfA8L2bC4XHROjYYDRYRnIczcVzjdcaU2BvKSCrq+CyDs6gZvKnJA97DU8qp6ynlLTGKloAMlk7F0ZZKIJWMIxmPIRFrITXT71EkW6h/vDycVBKn1wmrxVoAZ9Lrm7KMKbHFWnAs7XK4xeKCn3V6MEDNFkSsOYrOdAwz+/px5hu78eKpaXzroQmMD3UiSWaSCTKTaEUq0YwoGXZ6fdSYHuoh+ypYp7OIIgNgzHwfsB9aVnOr1SvCzWba02Yn/IIPPup0nnbAjq4ELn3nMD596yhWXn8AV1+dxccX78dHP5nB3NFxtKVTYkbakq1IUCk8PmpM6gmXx0lAyypcZkBbYIBFbrG4RbjJ5CDZ4SMDHtrzASGEX7wwg3+88SCeOrYL0xM9mBrvxT3TAzj/5BQ+fu0gfnBqF84+vhMvPTaME4czYlO6fbntWWrAUmqARd7Y6BThRqMNBoOV4B64adjM7u3Dp798GKe+NoaxgXYM7chg52APxkf6sPu2flx48gv48Pxe/PaFSVx+fgJ/OTuOpdOD2NlH/UAG1uD5UphLDbDIGxrsIlyvt4oj1UHpOzoziPcvHsG1C1/CRH8SQ9vbRAOjZGBsaDvGh7djz0QfTjxwJ3715s9waHoY9+3pwM/n+rD0TA/iLd4COO0A8b3EQD5yBtdqc1tnz1hKjHzx9AHcO5XBYHdcNDDc30nqErPAtG/qNly58icsLy1jYqgbve2tmBqO4zenu/H1uyLQk4E8PK8SA0ajfRWeGxomnHtiGn9YmEVPexgd8RANnRY8+NVZHNi7CyNkYmQgg8mJQSwR+MqVdzA9OYqu9hg6E7RjUhG8dDyFl4+30ixYg7PBtK4BOZyNTk7TgNeevgNvffcupOIC7W9moBlvXHodf752FQf3TWJiuBsXF3+Kv/7tfTJ1O03HmPiZthhNy3gQZ47E8cOTLaKB3EQ0sRNSfC8xkIez2c0OELXagOOHevHJpS/j2OFeGr9BWjiMnf09uHz5bbz77lW8srCAlY/+iZlDB5Fpa0VnshlpgqdiQdqKAn78zRjmZoMw6M2r8LxKDLCa5+C5I1RFspubqMNvxyeL9+LDH30Ru0fitHgYIzu68fbyMv717//g6JGvIEPgDpqCLPJkaxDRiB+P3R3Gr+daMJp20cm4BlepjKJKDLC0F53f4mlmowPlztEY3jw9icfv78bJezI4Sfv8iSOj+P7cfThxdzuOHUzhkQMJPLS/FQ/vj+Lsoy1YmmvFsb08TEZzATi3vr7UgEplKDm/xV6ghokFPLh+/g6svDqN66/sxt9f/jzt9TFce3EE73yvH398vhe/f7YLv/t2O5afSmL+0Sj2D3hhMbGyFsLr63Uk7XoGNCXw/BHKTjSeLhsR3kVyIyKQAqSgpIALYd6JkNcBnma/3dJEdaeOlyLPR83gCoWWpFzPgIo+rCu+PKyeZGyQ6KUxWiD6u07LhkujeBVj25dFrZbB6V4oguvqONTWKkm16/WAOkuiLxtL4PKTrHisyve3vNPlKV+Dq+hKVsOULTbAEfwDjUZDi3C0YEPB+b2mRtk0y0Wai9Yo1dkga2R9EVwpwrdt24aqqqoP5McxuxQo6+rqLnAcg3ME0pIMq6BiycE5uL6oxnmohqQmcD2qq6tFeGVlJbZs2XKBMfMXEnZFri4vL58mcJbB80Y4jv1u/Ay4oQSeB9fUqAmqJGg1i1gUg1dUVGTLysqmGVN+Pd9CaqDmmC80sGZEozEUpTyX5vXhSoLX5tONrVu3MrAoCnSesSTm6ouloobkpVKc0+l0WbmBXG/kpFZzBOcIzBGYSUNwNcFZdyvEOsvTLYPTdbz8HGNIrLLiZwP2HKcgOahGhxQKxSLBV1hZ5EbYTmFbVqlUiqqvrycDCjJQJ24vuQGKPksGVmi9RUr7YVrbKTE23ejxbJNUGwPJTQqSoqTmm1RUWsMtrVn9WXD5cwJ7dKoi1UndqrpJKaU1qqQ1NxbD/gsTn8brWjEn6AAAAABJRU5ErkJggg==">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <img class="logo" src="/logo.png" alt="到梦空间">
+      <div class="brand-text">
+        <div class="brand-name">到梦空间</div>
+        <div class="brand-sub">自动报名工作台</div>
+      </div>
+    </div>
+    <div class="top-right">
+      <button id="btnTheme" class="icon-btn" title="切换深色/浅色主题">◐</button>
+      <span id="badgeDry" class="chip chip-warn hidden">试运行</span>
+      <span id="badgeFatal" class="chip chip-danger hidden">熔断</span>
+      <span id="pillRun" class="pill pill-off">已停止</span>
+      <span id="nextRun" class="mono chip-chip">—</span>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="rail">
+      <div class="rail-group">
+        <button class="rail-item active" data-page="overview"><i class="ico ico-pulse"></i>总览</button>
+        <button class="rail-item" data-page="records"><i class="ico ico-list"></i>运行记录</button>
+        <button class="rail-item" data-page="activity"><i class="ico ico-tag"></i>活动档案</button>
+        <button class="rail-item" data-page="settings"><i class="ico ico-gear"></i>设置</button>
+      </div>
+      <div class="rail-foot">
+        <div id="acctCard" class="acct">
+          <div class="acct-name">未登录</div>
+          <div class="acct-school"></div>
+        </div>
+        <div id="verTag" class="ver">client v1.2.0</div>
+      </div>
+    </nav>
+
+    <main class="content">
+      <!-- ============ 总览 ============ -->
+      <section id="page-overview" class="page">
+        <div class="hero-grid">
+          <div class="card">
+            <div class="card-title">引擎</div>
+            <div class="ctrl-row">
+              <button id="btnStart" class="btn btn-primary">启动</button>
+              <button id="btnStop" class="btn">停止</button>
+              <button id="btnCycle" class="btn">立即扫描一轮</button>
+            </div>
+            <div class="kv">
+              <div><span>轮询间隔</span><b id="kvInterval">—</b></div>
+              <div><span>自动报名</span><b id="kvAuto">—</b></div>
+              <div><span>邮箱通知</span><b id="kvMail">—</b></div>
+              <div><span>连续异常</span><b id="kvFails">0</b></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">统计</div>
+            <div class="stat-grid">
+              <div class="stat ok"><b id="stOk">0</b><span>报名成功</span></div>
+              <div class="stat"><b id="stTotal">0</b><span>处理活动</span></div>
+              <div class="stat"><b id="stSeen">0</b><span>观察中</span></div>
+              <div class="stat"><b id="stToday">0</b><span>今日成功</span></div>
+            </div>
+            <div class="kv"><div><span>引擎启动于</span><b id="kvSince" class="mono">—</b></div>
+              <div><span>完成轮次</span><b id="kvCycles">0</b></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">近 7 日报名趋势</div>
+          <div id="trendChart" class="trend"></div>
+        </div>
+
+        <div class="card feed-card">
+          <div class="card-title-row">
+            <div class="card-title">事件流</div>
+            <div class="feed-ctl">
+              <button id="btnPause" class="mini-btn">暂停滚动</button>
+              <button id="btnClearView" class="mini-btn">清屏</button>
+            </div>
+          </div>
+          <div id="feed" class="feed"></div>
+        </div>
+      </section>
+
+      <!-- ============ 运行记录 ============ -->
+      <section id="page-records" class="page hidden">
+        <div class="card">
+          <div class="card-title-row"><div class="card-title">运行记录 · 最近事件</div>
+            <button id="btnRefreshRec" class="mini-btn">刷新</button></div>
+          <div class="table-wrap">
+            <table id="recTable" class="table">
+              <thead><tr><th>时间</th><th>类型</th><th>内容</th><th>结果</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 活动档案 ============ -->
+      <section id="page-activity" class="page hidden">
+        <div class="card">
+          <div class="card-title-row"><div class="card-title">活动档案 · 全部已处理/观察中的活动</div>
+            <button id="btnRefreshArc" class="mini-btn">刷新</button></div>
+          <div class="table-wrap">
+            <table id="arcTable" class="table">
+              <thead><tr><th>时间</th><th>活动</th><th>状态</th><th>服务端</th><th>说明</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 设置 ============ -->
+      <section id="page-settings" class="page hidden">
+        <div class="settings-grid">
+          <div class="card">
+            <div class="card-title-row">
+              <div class="card-title">运行</div>
+              <button id="btnSaveCfg" class="btn btn-primary btn-sm">保存配置</button>
+            </div>
+            <div class="form">
+              <label>轮询间隔（秒）<input id="fInterval" type="number" min="60" step="30"></label>
+              <label>每轮翻页数<input id="fMaxPages" type="number" min="1" max="5"></label>
+              <label>单活动失败重试轮数<input id="fMaxRetry" type="number" min="1" max="10"></label>
+              <label class="chk"><input id="fAuto" type="checkbox">命中规则后自动报名</label>
+              <label class="chk warn-label"><input id="fDry" type="checkbox">试运行模式（绝不提交真实报名）</label>
+              <label class="chk"><input id="fAutoStart" type="checkbox">登录 Windows 后自动启动工作台</label>
+              <p id="autoStartHint" class="hint">—</p>
+              <div class="row"><button id="btnNotifTest" class="btn btn-sm">测试系统气泡</button>
+                <span id="notifTestRes" class="hint"></span></div>
+              <p class="hint">改动保存后下一轮生效（热更新，无需重启引擎）。</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">挑选规则</div>
+            <div class="form">
+              <label>标题包含关键词（每行一个，留空=全部）
+                <textarea id="fInc" rows="4" placeholder="线上"></textarea></label>
+              <label>标题排除关键词（每行一个）
+                <textarea id="fExc" rows="2" placeholder="线下"></textarea></label>
+              <label class="chk"><input id="fDetail" type="checkbox">标题不含时再查活动详情判定</label>
+              <label>详情特征词（逗号分隔）
+                <input id="fDetailKw" type="text" placeholder="线上,online"></label>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">账号（到梦空间）</div>
+            <div class="form">
+              <div class="acct-now" id="acctNow">未登录</div>
+              <label>登录手机号<input id="fPhone" type="text" placeholder="150…"></label>
+              <label>密码<input id="fPwd" type="password" placeholder="留空则保持原密码"></label>
+              <div class="row"><button id="btnApplyAcct" class="btn btn-primary btn-sm">验证并切换账号</button>
+                <span id="acctRes" class="hint"></span></div>
+              <p class="hint">切换流程：用填写的凭据先到到梦服务器验证 → 通过后清除旧登录态并立即重登新账号，即刻生效。
+                仅修改规则/邮箱等其它设置用右上「保存配置」，与本按钮互不影响。历史报名记录按活动 ID 去重，不会被新账号覆盖。</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">QQ 邮箱通知</div>
+            <div class="form">
+              <label>发件邮箱<input id="fMailFrom" type="text" placeholder="QQ号@qq.com"></label>
+              <label>SMTP 授权码<input id="fMailCode" type="password" placeholder="留空则不修改"></label>
+              <label>收件邮箱（多个用逗号分隔）<input id="fMailTo" type="text"></label>
+              <div class="row"><button id="btnMailTest" class="btn">发送测试邮件</button>
+                <span id="mailTestRes" class="hint"></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="statusbar">
+    <span id="sbConn" class="sb-item dot dot-ok">已连接</span>
+    <span id="sbUser" class="sb-item">—</span>
+    <span class="sb-spacer"></span>
+    <span id="sbLog" class="sb-item">工作台 v1.2.0 · 本地回环 127.0.0.1</span>
+  </footer>
+  <div id="toast" class="toast hidden"></div>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>
+

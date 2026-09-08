@@ -1,0 +1,14 @@
+venv/
+logs/
+.tmp/
+.build_tmp/
+.electron-tool/
+.edge-app/
+dist/
+.publish/
+__pycache__/
+
+# 敏感文件：仅本地使用，严禁入库
+config.yaml
+token.json
+state.sqlite
