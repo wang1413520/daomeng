@@ -1,7 +1,7 @@
 {
   "name": "dreamdmk-workbench",
   "productName": "到梦空间 · 自动报名工作台",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "到梦空间自动报名桌面客户端",
   "main": "main.js",
   "private": true
