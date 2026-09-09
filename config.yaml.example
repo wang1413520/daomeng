@@ -1,4 +1,4 @@
-# ============ 到梦空间自动报名机器人 · 配置模板 ============
+﻿# ============ 到梦空间自动报名机器人 · 配置模板 ============
 # 复制本文件为 config.yaml 后填写（本模板可安全公开，无任何真实凭据）
 
 account:
@@ -18,7 +18,8 @@ poll:
 rules:
   name_include: ["线上"]        # 标题关键词（每行一个，留空=全部）
   name_exclude: []
-  detail_check: true            # 标题不含时再查活动详情
+  detail_check: true
+  include_planned: true  # 同时盯梢规划中活动，开放报名后自动报名            # 标题不含时再查活动详情
   detail_kw: ["线上", "online"]
   signup_wait_sec: [2, 6]
 
@@ -42,3 +43,4 @@ dashboard:
 
 dry_run: false
 log_level: "INFO"
+

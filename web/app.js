@@ -367,6 +367,7 @@ async function loadSettings() {
     $("fInc").value = ((c.rules && c.rules.name_include) || []).join("\n");
     $("fExc").value = ((c.rules && c.rules.name_exclude) || []).join("\n");
     $("fDetail").checked = !c.rules || c.rules.detail_check !== false;
+    $("fPlanned").checked = !c.rules || c.rules.include_planned !== false;
     $("fDetailKw").value = ((c.rules && c.rules.detail_kw) || ["线上", "online"]).join(",");
     $("fPhone").value = (c.account && c.account.phone) || "";
     $("fPwd").value = "";
@@ -393,6 +394,7 @@ async function saveSettings() {
       name_include: textlist($("fInc").value),
       name_exclude: textlist($("fExc").value),
       detail_check: $("fDetail").checked,
+      include_planned: $("fPlanned").checked,
       detail_kw: String($("fDetailKw").value).split(",").map((s) => s.trim()).filter(Boolean),
     },
     dry_run: $("fDry").checked,

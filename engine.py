@@ -36,6 +36,8 @@ log = logging.getLogger("bot")
 TERMINAL_CODES = {"2000000", "2000011", "2000166", "2000004"}
 TERMINAL_TEXT = ("已报", "重复报名", "不在活动规定", "不能报名", "活动不存在",
                  "已结束", "不是这个学院", "不是本学院")
+# 登录态失效类返回码：自动重登一次后重放
+RELOGIN_CODES = {"400", "10006", "10007", "10008", "11001"}
 
 
 def now_str():
@@ -383,8 +385,8 @@ class Engine:
         for attempt in range(retries + 2):
             try:
                 res = getattr(self.api, fn_name)(self.session["token"], self.session["uid"], *args)
-                if str(res.get("code", "")) == "400" and attempt == 0:
-                    log.warning("登录态失效，重新登录")
+                if str(res.get("code", "")) in RELOGIN_CODES and attempt == 0:
+                    log.warning("登录态失效(code=%s)，重新登录", res.get("code"))
                     self.login()
                     continue
                 return res
@@ -402,26 +404,35 @@ class Engine:
         return " ".join(str(v) for v in vals if isinstance(v, str))
 
     def discover(self):
+        """拉前 N 页，返回候选条目：status=3 报名中 + status=2 规划中(可配置关闭)"""
         pages = int(self.cfg.get("poll", {}).get("max_pages", 2))
+        include_planned = self.cfg.get("rules", {}).get("include_planned", True)
         found, seen_aids = [], set()
         for page in range(1, pages + 1):
             res = self._call("activities", page, "", "", "")
             data = res.get("data") or {}
             lst = data.get("list") or []
+            n2 = n3 = 0
             for it in lst:
                 if not isinstance(it, dict) or "aid" not in it:
                     continue
+                st = str(it.get("status", ""))
                 aid = str(it["aid"])
                 if aid in seen_aids:
                     continue
                 seen_aids.add(aid)
-                if str(it.get("status", "")) == "3":
+                if st == "3":
+                    n3 += 1
                     found.append(it)
-            log.info("第 %d 页 %d 条，其中报名中 %d", page, len(lst),
-                     sum(1 for x in lst if isinstance(x, dict) and str(x.get("status", "")) == "3"))
+                elif st == "2" and include_planned:
+                    n2 += 1
+                    found.append(it)
+            log.info("第 %d 页 %d 条（候选：报名中 %d / 规划中 %d）", page, len(lst), n3, n2)
             if len(lst) == 0:
                 break
-        log.info("本轮发现报名中活动 %d 个", len(found))
+        log.info("本轮发现候选活动 %d 个（报名中 %d / 规划中 %d）", len(found),
+                 sum(1 for x in found if str(x.get("status")) == "3"),
+                 sum(1 for x in found if str(x.get("status")) == "2"))
         return found
 
     # ---------------- 挑选 ----------------
@@ -488,6 +499,8 @@ class Engine:
                 "quota": ("%s/%s" % (jn, jm)) if jm > 0 else ("不限" if jn else "—"),
                 "category": dd.get("catalog2name") or dd.get("catalog1name") or "—",
                 "online": "线上" in text,
+                "detail_status": str(dd.get("status", "")),
+                "join_start_ms": int(dd.get("joinstartdate") or 0) or 0,
             }
             self._profile_cache[aid] = p
             return p
@@ -506,6 +519,19 @@ class Engine:
         if row and row["attempts"] >= max_try:
             log.info("跳过 %s [%s]：已达重试上限", name, aid)
             return
+
+        # 规划中(status=2)：报名窗口未开放，持续盯梢；到点(详情状态变3或已过开放时间)才提交
+        if str(item.get("status", "3")) == "2":
+            p = self._fetch_profile(aid)
+            ds = str(p.get("detail_status", ""))
+            jt = int(p.get("join_start_ms") or 0)
+            now_ms = int(time.time() * 1000)
+            if ds == "3" or (jt and now_ms >= jt):
+                log.info("规划中活动已开放报名，转入报名: %s [%s]", name, aid)
+            else:
+                log.info("规划中活动未开放，继续等待: %s [%s]（开放时间 %s）", name, aid,
+                         p.get("joindate", "—"))
+                return
 
         lo, hi = (int(x) for x in self.cfg.get("rules", {}).get("signup_wait_sec", [2, 6]))
         log.info("命中候选：%s [%s]，%.1fs 后提交…", name, aid, random.uniform(lo, hi))

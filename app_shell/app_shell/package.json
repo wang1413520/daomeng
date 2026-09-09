@@ -1,9 +1,10 @@
 ﻿{
   "name": "dreamdmk-workbench",
   "productName": "鍒版ⅵ绌洪棿 路 鑷姩鎶ュ悕宸ヤ綔鍙?,
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "鍒版ⅵ绌洪棿鑷姩鎶ュ悕妗岄潰瀹㈡埛绔?,
   "main": "main.js",
   "private": true
 }
+
 
