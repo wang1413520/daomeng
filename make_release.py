@@ -42,9 +42,9 @@ def build(name, src, want_cfg_template, cfg_at_root=False):
     print("[2/3]", name, "净身中…")
     scrub(dst)
     if want_cfg_template:
-        # 后端绿色版：配置文件在包根目录；桌面版：在 resources/app/backend
+        # 后端绿色版：配置文件在包根目录；桌面版：在 resources/backend
         cfg_dst = os.path.join(dst, "config.yaml") if cfg_at_root \
-            else os.path.join(dst, "resources", "app", "backend", "config.yaml")
+            else os.path.join(dst, "resources", "backend", "config.yaml")
         if os.path.isfile(TPL) and os.path.isdir(os.path.dirname(cfg_dst)):
             shutil.copy2(TPL, cfg_dst)
             print("  + config.yaml <- 占位模板 ->", cfg_dst)

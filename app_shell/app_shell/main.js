@@ -15,9 +15,10 @@ try { localVersion = require('./package.json').version || '0.0.0'; } catch (e) {
 
 const PORT = parseInt(process.env.DMK_PORT || '8921', 10);
 const URL = 'http://127.0.0.1:' + PORT;
-const APP_DIR = __dirname;
-const ICON = path.join(APP_DIR, 'icon.ico');
-const LOGF = path.join(APP_DIR, '..', '..', 'electron-app.log');   // exe 同层
+const APP_DIR = __dirname;                 // asar 内
+const RES = process.resourcesPath;         // resources/（asar 外：后端/脚本/图标）
+const ICON = path.join(RES, 'icon.ico');
+const LOGF = path.join(path.dirname(process.execPath), 'electron-app.log');   // exe 同层
 
 let win = null;
 let backend = null;
@@ -28,10 +29,10 @@ function lg(msg) {
 
 function backendCandidates() {
   const cands = [];
-  const bundled = path.join(APP_DIR, 'backend', 'DreamDMK.exe');
+  const bundled = path.join(RES, 'backend', 'DreamDMK.exe');
   if (fs.existsSync(bundled)) cands.push({ cmd: bundled, args: ['--no-open', '--port', String(PORT)] });
-  for (const up of [1, 2, 3, 4]) {
-    const root = path.resolve(APP_DIR, ...Array(up).fill('..'));
+  for (const up of [1, 2, 3]) {
+    const root = path.resolve(RES, ...Array(up).fill('..'));
     const pyw = path.join(root, 'venv', 'Scripts', 'pythonw.exe');
     const dash = path.join(root, 'dashboard.py');
     if (fs.existsSync(pyw) && fs.existsSync(dash)) {
@@ -97,6 +98,8 @@ function createWindow() {
 }
 
 // ---------- 更新检查（打包版生效；Release 资产名须为 dreamdmk-desktop*.zip） ----------
+function updaterPs() { return path.join(RES, 'updater_apply.ps1'); }
+
 async function doUpdateCheck(manual) {
   try {
     const rel = await updater.latestRelease(REPO);
@@ -156,7 +159,7 @@ function ensureShortcut() {
       lg('shortcut 已存在，跳过询问');
       return;
     }
-    const ico = path.join(APP_DIR, 'icon.ico');
+    const ico = path.join(RES, 'icon.ico');
     const ps = '$ws = New-Object -ComObject WScript.Shell; ' +
       '$lnk = Join-Path ([Environment]::GetFolderPath("Desktop")) "到梦空间工作台.lnk"; ' +
       '$sc = $ws.CreateShortcut($lnk); ' +
