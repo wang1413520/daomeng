@@ -15,9 +15,10 @@ try { localVersion = require('./package.json').version || '0.0.0'; } catch (e) {
 
 const PORT = parseInt(process.env.DMK_PORT || '8921', 10);
 const URL = 'http://127.0.0.1:' + PORT;
-const APP_DIR = __dirname;
-const ICON = path.join(APP_DIR, 'icon.ico');
-const LOGF = path.join(APP_DIR, '..', '..', 'electron-app.log');   // exe 同层
+const APP_DIR = __dirname;                 // asar 内
+const RES = process.resourcesPath;         // resources/（asar 外：后端/脚本/图标）
+const ICON = path.join(RES, 'icon.ico');
+const LOGF = path.join(path.dirname(process.execPath), 'electron-app.log');   // exe 同层
 
 let win = null;
 let backend = null;
@@ -28,10 +29,10 @@ function lg(msg) {
 
 function backendCandidates() {
   const cands = [];
-  const bundled = path.join(APP_DIR, 'backend', 'DreamDMK.exe');
+  const bundled = path.join(RES, 'backend', 'DreamDMK.exe');
   if (fs.existsSync(bundled)) cands.push({ cmd: bundled, args: ['--no-open', '--port', String(PORT)] });
-  for (const up of [1, 2, 3, 4]) {
-    const root = path.resolve(APP_DIR, ...Array(up).fill('..'));
+  for (const up of [1, 2, 3]) {
+    const root = path.resolve(RES, ...Array(up).fill('..'));
     const pyw = path.join(root, 'venv', 'Scripts', 'pythonw.exe');
     const dash = path.join(root, 'dashboard.py');
     if (fs.existsSync(pyw) && fs.existsSync(dash)) {
@@ -97,6 +98,8 @@ function createWindow() {
 }
 
 // ---------- 更新检查（打包版生效；Release 资产名须为 dreamdmk-desktop*.zip） ----------
+function updaterPs() { return path.join(RES, 'updater_apply.ps1'); }
+
 async function doUpdateCheck(manual) {
   try {
     const rel = await updater.latestRelease(REPO);
@@ -147,6 +150,36 @@ async function doUpdateCheck(manual) {
   }
 }
 
+function ensureShortcut() {
+  // 按"存在性"询问：桌面已有本应用快捷方式就静默跳过，没有才询问
+  try {
+    const desk = app.getPath('desktop');
+    const lnkPath = path.join(desk, '到梦空间工作台.lnk');
+    if (fs.existsSync(lnkPath)) {
+      lg('shortcut 已存在，跳过询问');
+      return;
+    }
+    const ico = path.join(RES, 'icon.ico');
+    const ps = '$ws = New-Object -ComObject WScript.Shell; ' +
+      '$lnk = Join-Path ([Environment]::GetFolderPath("Desktop")) "到梦空间工作台.lnk"; ' +
+      '$sc = $ws.CreateShortcut($lnk); ' +
+      '$sc.TargetPath = "' + process.execPath + '"; ' +
+      '$sc.WorkingDirectory = "' + path.dirname(process.execPath) + '"; ' +
+      '$sc.IconLocation = "' + ico + '"; ' +
+      '$sc.Description = "到梦空间 · 自动报名工作台"; $sc.Save()';
+    dialog.showMessageBox(win, {
+      type: 'question',
+      message: '首次启动',
+      detail: '是否在桌面创建快捷方式（到梦空间工作台）？\n以后也可以手动：右键 DreamDMK.exe → 发送到 → 桌面快捷方式。',
+      buttons: ['创建桌面快捷方式', '不用了'],
+      defaultId: 0, cancelId: 1,
+    }).then((r) => {
+      if (r.response !== 0) return;
+      spawn('powershell', ['-NoProfile', '-Command', ps], { windowsHide: true }).on('error', () => {});
+    });
+  } catch (e) { lg('shortcut ask failed: ' + e.message); }
+}
+
 lg('=== boot ===');
 try {
   // 用户数据目录放在应用旁（避免 %APPDATA% 权限问题/沙箱拒绝）
@@ -174,6 +207,7 @@ if (!app.requestSingleInstanceLock()) {
       return;
     }
     createWindow();
+    setTimeout(() => { if (win && !win.isDestroyed()) ensureShortcut(); }, 2500);
     app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
     if (app.isPackaged) {
       setTimeout(() => doUpdateCheck(false), 8000);   // 启动 8 秒后静默检查更新
